@@ -1,0 +1,1 @@
+AI resume analyzer and career selector
