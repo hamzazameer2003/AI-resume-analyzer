@@ -17,6 +17,13 @@ async function analyze(req, res) {
     resumeText = await extractTextFromFile(filePath);
   }
 
+  if (!resumeText || !resumeText.trim()) {
+    return res.status(400).json({
+      message:
+        "Could not extract text from the uploaded file. Please upload a text-based PDF/DOCX or paste resume text.",
+    });
+  }
+
   const result = await analyzeResume({ jobTitle, fileUrl, resumeText });
 
   const userId = req.user?.sub;

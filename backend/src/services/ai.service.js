@@ -6,7 +6,10 @@ async function callGemini(prompt) {
     throw new Error("Missing GEMINI_API_KEY");
   }
 
-  const url = process.env.GEMINI_API_URL || "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash-lite";
+  const url =
+    process.env.GEMINI_API_URL ||
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
   const response = await axios.post(
     `${url}?key=${apiKey}`,
     {

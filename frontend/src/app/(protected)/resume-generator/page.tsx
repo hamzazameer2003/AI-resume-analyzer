@@ -67,19 +67,19 @@ export default function ResumeGeneratorPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-semibold">AI Resume Builder</h1>
-        <p className="text-sm text-slate">Fill the form and generate a professional PDF resume.</p>
+        <p className="text-sm text-slate dark:text-slate-300">Fill the form and generate a professional PDF resume.</p>
       </div>
-      <form className="rounded-2xl border border-white/70 bg-white/80 p-6 shadow-sm" onSubmit={handleSubmit}>
+      <form className="rounded-2xl border border-white/70 bg-white/80 p-6 shadow-sm dark:border-white/10 dark:bg-slate-900/70" onSubmit={handleSubmit}>
         <div className="grid gap-4 md:grid-cols-2">
           <input
-            className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink"
+            className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
             placeholder="Full name"
             value={form.fullName}
             onChange={(e) => updateField("fullName", e.target.value)}
             required
           />
           <input
-            className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink"
+            className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
             placeholder="Email"
             type="email"
             value={form.email}
@@ -87,14 +87,14 @@ export default function ResumeGeneratorPage() {
             required
           />
           <input
-            className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink"
+            className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
             placeholder="Phone"
             value={form.phone}
             onChange={(e) => updateField("phone", e.target.value)}
             required
           />
           <input
-            className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink"
+            className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
             placeholder="Skills (comma-separated)"
             value={form.skills}
             onChange={(e) => updateField("skills", e.target.value)}
@@ -102,7 +102,7 @@ export default function ResumeGeneratorPage() {
           />
         </div>
         <textarea
-          className="mt-4 w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink"
+          className="mt-4 w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
           placeholder="Professional summary"
           rows={3}
           value={form.summary}
@@ -133,7 +133,7 @@ export default function ResumeGeneratorPage() {
         </div>
         {experienceLevel === "experienced" && (
           <textarea
-            className="mt-4 w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink"
+            className="mt-4 w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
             placeholder="Experience details"
             rows={4}
             value={form.experience}
@@ -143,7 +143,7 @@ export default function ResumeGeneratorPage() {
         )}
         {experienceLevel === "fresher" && (
           <textarea
-            className="mt-4 w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink"
+            className="mt-4 w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
             placeholder="Projects and short descriptions"
             rows={4}
             value={form.projects}
@@ -154,7 +154,7 @@ export default function ResumeGeneratorPage() {
         {error && <p className="mt-3 text-sm text-red-500">{error}</p>}
         <button
           type="submit"
-          className="mt-4 rounded-xl bg-ink px-4 py-3 text-sm text-fog transition hover:-translate-y-0.5"
+          className="mt-4 rounded-xl bg-ink px-4 py-3 text-sm text-fog transition hover:-translate-y-0.5 dark:bg-slate-100 dark:text-slate-900"
           disabled={loading}
         >
           {loading ? "Generating..." : "Generate Resume"}

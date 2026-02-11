@@ -1,7 +1,9 @@
-const { Resend } = require("resend");
+const sgMail = require("@sendgrid/mail");
 const Otp = require("../models/otp.model");
 
-const resend = new Resend(process.env.RESEND_API_KEY || "");
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+}
 
 function generateOtp() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -16,13 +18,13 @@ async function sendOtpEmail(email) {
     { upsert: true, new: true }
   );
 
-  if (!process.env.RESEND_API_KEY || !process.env.RESEND_FROM_EMAIL) {
+  if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_FROM_EMAIL) {
     return { sent: false, otp }; // fallback for local dev
   }
 
-  await resend.emails.send({
-    from: process.env.RESEND_FROM_EMAIL,
+  await sgMail.send({
     to: email,
+    from: process.env.SENDGRID_FROM_EMAIL,
     subject: "Your OTP Code",
     html: `<p>Your OTP code is <strong>${otp}</strong>. It expires in 10 minutes.</p>`,
   });

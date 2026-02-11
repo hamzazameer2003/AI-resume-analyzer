@@ -38,14 +38,14 @@ export default function LoginPage() {
   }, [router, searchParams]);
 
   return (
-    <div className="min-h-screen bg-fog">
+    <div className="min-h-screen bg-fog dark:bg-slate-950">
       <div className="mx-auto flex min-h-screen max-w-4xl items-center justify-center px-6">
-        <div className="w-full max-w-md rounded-3xl border border-white/70 bg-white/80 p-8 shadow-xl">
+        <div className="w-full max-w-md rounded-3xl border border-white/70 bg-white/80 p-8 shadow-xl dark:border-white/10 dark:bg-slate-900/70">
           <h1 className="text-2xl font-semibold">Welcome back</h1>
-          <p className="mt-2 text-sm text-slate">Log in to access your dashboard and features.</p>
+          <p className="mt-2 text-sm text-slate dark:text-slate-300">Log in to access your dashboard and features.</p>
           <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
             <input
-              className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink"
+              className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
               placeholder="Email"
               type="email"
               value={email}
@@ -53,7 +53,7 @@ export default function LoginPage() {
               required
             />
             <input
-              className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink"
+              className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
               placeholder="Password"
               type="password"
               value={password}
@@ -63,17 +63,17 @@ export default function LoginPage() {
             {error && <p className="text-sm text-red-500">{error}</p>}
             <button
               type="submit"
-              className="w-full rounded-xl bg-ink px-4 py-3 text-sm text-fog transition hover:-translate-y-0.5"
+              className="w-full rounded-xl bg-ink px-4 py-3 text-sm text-fog transition hover:-translate-y-0.5 dark:bg-slate-100 dark:text-slate-900"
               disabled={loading}
             >
               {loading ? "Logging in..." : "Login"}
             </button>
           </form>
-          <div className="mt-4 flex items-center justify-between text-sm text-slate">
+          <div className="mt-4 flex items-center justify-between text-sm text-slate dark:text-slate-300">
             <Link href="/signup">Create account</Link>
             <a
               href={`${API_URL}/api/auth/google`}
-              className="rounded-full border border-ink/10 px-3 py-1 text-xs"
+              className="rounded-full border border-ink/10 px-3 py-1 text-xs dark:border-white/10"
             >
               Login with Google
             </a>

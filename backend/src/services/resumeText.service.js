@@ -1,11 +1,15 @@
 const path = require("path");
 const fs = require("fs");
-const pdf = require("pdf-parse");
+const pdfParse = require("pdf-parse");
 const mammoth = require("mammoth");
 
 async function extractFromPdf(filePath) {
   const buffer = fs.readFileSync(filePath);
-  const data = await pdf(buffer);
+  const parseFn = typeof pdfParse === "function" ? pdfParse : pdfParse.default;
+  if (typeof parseFn !== "function") {
+    return "";
+  }
+  const data = await parseFn(buffer);
   return data.text || "";
 }
 

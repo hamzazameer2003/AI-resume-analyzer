@@ -11,6 +11,11 @@ body {
   font-family: var(--font-body), sans-serif;
 }
 
+html.dark body {
+  background: radial-gradient(circle at top left, #0f172a, #020617 45%);
+  color: #e2e8f0;
+}
+
 h1,
 h2,
 h3,

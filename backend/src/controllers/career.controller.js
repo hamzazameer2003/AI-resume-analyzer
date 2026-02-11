@@ -14,7 +14,7 @@ async function suggestions(req, res) {
 
   const prompt = `Based on this resume analysis and target job, suggest 5 suitable career roles. Return ONLY JSON: { \"suggestions\": [\"...\"] }.\nAnalysis: ${JSON.stringify(
     latest.analysis || {}
-  )}\nTarget: ${latest.jobTitle || \"\"}`;\n
+  )}\nTarget: ${latest.jobTitle || ""}`;
   try {
     const text = await generateWithFallback(prompt);
     const parsed = parseJsonResponse(text);
@@ -22,9 +22,11 @@ async function suggestions(req, res) {
       return res.json({ suggestions: parsed.suggestions });
     }
     return res.json({ suggestions: [] });
-  } catch (err) {
+  } 
+  catch (err) {
     return res.json({ suggestions: [] });
   }
 }
+
 
 module.exports = { suggestions };

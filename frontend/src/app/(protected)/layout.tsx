@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -27,18 +28,19 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen">
-      <header className="border-b border-white/60 bg-white/70 px-6 py-4">
+      <header className="border-b border-white/60 bg-white/70 px-6 py-4 dark:border-white/10 dark:bg-slate-900/60">
         <div className="mx-auto flex max-w-6xl items-center justify-between">
           <Link href="/" className="text-base font-semibold">
             ResumePilot
           </Link>
-          <nav className="flex items-center gap-4 text-sm text-slate">
+          <nav className="flex items-center gap-4 text-sm text-slate dark:text-slate-300">
             <Link href="/dashboard">Dashboard</Link>
             <Link href="/resume-analysis">Resume Analysis</Link>
             <Link href="/resume-generator">Resume Builder</Link>
             <Link href="/trending-jobs">Trending Jobs</Link>
             <Link href="/career-suggestions">Career Suggestions</Link>
           </nav>
+          <ThemeToggle />
         </div>
       </header>
       <div className="mx-auto max-w-6xl px-6 py-10">{children}</div>
