@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope, Sora } from "next/font/google";
 import "./globals.css";
+import SystemThemeSync from "@/components/SystemThemeSync";
 
 const sora = Sora({
   variable: "--font-display",
@@ -25,6 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${sora.variable} ${manrope.variable} bg-fog text-ink antialiased`}>
+        <SystemThemeSync />
         {children}
       </body>
     </html>

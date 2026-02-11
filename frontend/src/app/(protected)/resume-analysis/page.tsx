@@ -58,6 +58,31 @@ export default function ResumeAnalysisPage() {
     return "Low match";
   }, [result?.atsScore]);
 
+  function downloadReport() {
+    if (!result) return;
+    const lines = [
+      `ATS Score: ${result.atsScore ?? "N/A"} (${scoreLabel})`,
+      "",
+      "Strengths:",
+      ...(result.pros?.length ? result.pros.map((p) => `- ${p}`) : ["- None detected"]),
+      "",
+      "Weak Spots:",
+      ...(result.cons?.length ? result.cons.map((c) => `- ${c}`) : ["- None detected"]),
+      "",
+      "Suggestions:",
+      ...(result.suggestions?.length
+        ? result.suggestions.map((s, i) => `${i + 1}. ${s}`)
+        : ["- No suggestions yet"]),
+    ];
+    const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "resume-analysis.txt";
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -102,15 +127,37 @@ export default function ResumeAnalysisPage() {
               <p className="text-xs uppercase tracking-widest text-slate dark:text-slate-300">
                 ATS Score
               </p>
-              <div className="mt-3 flex items-end gap-4">
-                <span className="text-5xl font-semibold">{result.atsScore ?? "--"}</span>
-                <span className="text-sm text-slate dark:text-slate-300">{scoreLabel}</span>
-              </div>
-              <div className="mt-4 h-2 w-full rounded-full bg-fog dark:bg-slate-800">
-                <div
-                  className="h-2 rounded-full bg-ink transition-all dark:bg-slate-100"
-                  style={{ width: `${Math.min(result.atsScore || 0, 100)}%` }}
-                />
+              <div className="mt-4 flex items-center gap-6">
+                <div className="relative h-24 w-24">
+                  <svg viewBox="0 0 36 36" className="h-24 w-24 -rotate-90">
+                    <path
+                      className="fill-none stroke-slate-200 dark:stroke-slate-800"
+                      strokeWidth="3.5"
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                    <path
+                      className="fill-none stroke-ink dark:stroke-slate-100"
+                      strokeWidth="3.5"
+                      strokeLinecap="round"
+                      strokeDasharray={`${Math.min(result.atsScore || 0, 100)}, 100`}
+                      d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex items-center justify-center text-xl font-semibold">
+                    {result.atsScore ?? "--"}
+                  </div>
+                </div>
+                <div>
+                  <div className="text-sm text-slate dark:text-slate-300">Score verdict</div>
+                  <div className="text-lg font-semibold">{scoreLabel}</div>
+                  <button
+                    type="button"
+                    onClick={downloadReport}
+                    className="mt-3 rounded-full border border-ink/20 px-3 py-1 text-xs text-ink transition hover:-translate-y-0.5 dark:border-white/20 dark:text-slate-100"
+                  >
+                    Download report
+                  </button>
+                </div>
               </div>
             </div>
 

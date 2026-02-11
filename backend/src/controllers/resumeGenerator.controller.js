@@ -1,5 +1,5 @@
 const { generateResumePdf } = require("../services/pdf.service");
-const { rewriteLongFields } = require("../services/ai.service");
+const { rewriteLongFields, expandShortFields } = require("../services/ai.service");
 const ResumeProfile = require("../models/resumeProfile.model");
 
 async function generate(req, res) {
@@ -21,7 +21,8 @@ async function generate(req, res) {
     return res.status(400).json({ message: "projects are required" });
   }
 
-  const normalized = await rewriteLongFields(payload);
+  const expanded = await expandShortFields(payload);
+  const normalized = await rewriteLongFields(expanded);
 
   const userId = req.user?.sub;
   if (userId) {

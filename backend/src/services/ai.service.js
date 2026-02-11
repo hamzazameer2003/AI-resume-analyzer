@@ -104,9 +104,23 @@ async function rewriteLongFields(payload) {
   }
 }
 
+async function expandShortFields(payload) {
+  const prompt = `Improve and expand short resume fields to be more detailed, professional, and achievement-focused. Keep facts consistent. Return ONLY valid JSON with the same keys:\n${JSON.stringify(
+    payload
+  )}`;
+  try {
+    const text = await generateWithFallback(prompt);
+    const parsed = parseJsonResponse(text);
+    return parsed ? parsed : payload;
+  } catch (err) {
+    return payload;
+  }
+}
+
 module.exports = {
   analyzeResume,
   rewriteLongFields,
   generateWithFallback,
   parseJsonResponse,
+  expandShortFields,
 };

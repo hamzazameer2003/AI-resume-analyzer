@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import ThemeToggle from "@/components/ThemeToggle";
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -40,7 +39,6 @@ export default function ProtectedLayout({ children }: { children: React.ReactNod
             <Link href="/trending-jobs">Trending Jobs</Link>
             <Link href="/career-suggestions">Career Suggestions</Link>
           </nav>
-          <ThemeToggle />
         </div>
       </header>
       <div className="mx-auto max-w-6xl px-6 py-10">{children}</div>
