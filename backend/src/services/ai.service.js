@@ -6,7 +6,7 @@ async function callGemini(prompt) {
     throw new Error("Missing GEMINI_API_KEY");
   }
 
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash-lite";
+  const model = process.env.GEMINI_MODEL || "gemini-1.5-flash-8b";
   const url =
     process.env.GEMINI_API_URL ||
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
@@ -26,45 +26,8 @@ async function callGemini(prompt) {
   return text;
 }
 
-async function callDeepSeek(prompt) {
-  const apiKey = process.env.DEEPSEEK_API_KEY;
-  if (!apiKey) {
-    throw new Error("Missing DEEPSEEK_API_KEY");
-  }
-
-  const url = process.env.DEEPSEEK_API_URL || "https://api.deepseek.com/v1/chat/completions";
-  const response = await axios.post(
-    url,
-    {
-      model: process.env.DEEPSEEK_MODEL || "deepseek-chat",
-      messages: [{ role: "user", content: prompt }],
-    },
-    {
-      timeout: 20000,
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-    }
-  );
-
-  const text = response.data?.choices?.[0]?.message?.content;
-  if (!text) {
-    throw new Error("DeepSeek response missing text");
-  }
-
-  return text;
-}
-
 async function generateWithFallback(prompt) {
-  try {
-    return await callGemini(prompt);
-  } catch (err) {
-    if (process.env.DEEPSEEK_API_KEY) {
-      return callDeepSeek(prompt);
-    }
-    throw err;
-  }
+  return callGemini(prompt);
 }
 
 function parseJsonResponse(text) {
@@ -89,7 +52,10 @@ async function analyzeResume({ jobTitle, fileUrl, resumeText }) {
     const parsed = parseJsonResponse(text);
     return parsed ? { provider: "ai", ...parsed } : { provider: "ai", raw: text };
   } catch (err) {
-    return { provider: "mock", raw: "AI unavailable. Please configure API keys." };
+    return {
+      provider: "mock",
+      raw: `Gemini unavailable: ${err?.message || "unknown error"}. Check GEMINI_API_KEY/model/quota.`,
+    };
   }
 }
 

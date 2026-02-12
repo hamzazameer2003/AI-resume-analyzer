@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getJson } from "@/lib/api";
+import { deleteJson, getJson } from "@/lib/api";
 
 type DashboardData = {
   user: string | null;
@@ -15,6 +15,7 @@ type DashboardData = {
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [error, setError] = useState("");
+  const [deletingId, setDeletingId] = useState<string>("");
 
   useEffect(() => {
     const token = window.localStorage.getItem("token") || "";
@@ -22,6 +23,27 @@ export default function DashboardPage() {
       .then(setData)
       .catch((err) => setError(err instanceof Error ? err.message : "Failed to load"));
   }, []);
+
+  async function handleDelete(resumeId: string) {
+    const token = window.localStorage.getItem("token") || "";
+    setDeletingId(resumeId);
+    setError("");
+    try {
+      await deleteJson<{ message: string; resumeId: string }>(`/api/dashboard/${resumeId}`, token);
+      setData((prev) =>
+        prev
+          ? {
+              ...prev,
+              resumes: prev.resumes.filter((r) => r.id !== resumeId),
+            }
+          : prev
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Delete failed");
+    } finally {
+      setDeletingId("");
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -39,6 +61,16 @@ export default function DashboardPage() {
             <p className="text-sm text-slate dark:text-slate-300">{resume.jobTitle || "Target Role"}</p>
             <p className="text-2xl font-semibold">{resume.atsScore ?? "--"}</p>
             <p className="text-xs text-slate dark:text-slate-300">ATS Score</p>
+            {resume.id && (
+              <button
+                type="button"
+                onClick={() => handleDelete(resume.id as string)}
+                disabled={deletingId === resume.id}
+                className="mt-3 rounded-full border border-red-300 px-3 py-1 text-xs text-red-600 disabled:opacity-60 dark:border-red-400/40 dark:text-red-300"
+              >
+                {deletingId === resume.id ? "Deleting..." : "Delete Record"}
+              </button>
+            )}
           </div>
         ))}
         {!data?.resumes?.length && (

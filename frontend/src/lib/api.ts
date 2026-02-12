@@ -30,3 +30,17 @@ export async function getJson<T>(path: string, token?: string): Promise<T> {
 
   return res.json();
 }
+
+export async function deleteJson<T>(path: string, token?: string): Promise<T> {
+  const res = await fetch(`${API_URL}${path}`, {
+    method: "DELETE",
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.message || "Request failed");
+  }
+
+  return res.json();
+}

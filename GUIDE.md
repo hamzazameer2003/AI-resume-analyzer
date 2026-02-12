@@ -25,8 +25,7 @@ This repo contains a **Next.js frontend** and a **Node.js/Express backend** with
 - `JWT_SECRET` JWT signing key
 - `GEMINI_API_KEY` Gemini API key
 - `GEMINI_API_URL` optional (override full endpoint)
-- `GEMINI_MODEL` model name (default: `gemini-2.5-flash-lite`)
-- `DEEPSEEK_API_KEY` DeepSeek fallback key (optional)
+- `GEMINI_MODEL` model name (default: `gemini-1.5-flash-8b`)
 - `SENDGRID_API_KEY` SendGrid API key
 - `SENDGRID_FROM_EMAIL` Verified sender email
 - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL` for Google OAuth
@@ -52,7 +51,7 @@ This repo contains a **Next.js frontend** and a **Node.js/Express backend** with
 All feature endpoints require `Authorization: Bearer <token>`.
 
 ## Feature Notes
-- **Resume Analysis**: Upload PDF/DOC/DOCX; file stored under `backend/uploads/`. Text is extracted (PDF/DOCX) and sent to Gemini with DeepSeek fallback.
+- **Resume Analysis**: Upload PDF/DOC/DOCX; file stored under `backend/uploads/`. Text is extracted (PDF/DOCX) and sent to Gemini.
 - **AI Resume Generator**: Form inputs validated; generates a professional PDF with `pdfkit`.
 - **Trending Jobs**: Uses API if configured, otherwise scrapes public resources; falls back to a static list.
 - **Auth**: JWT for session access, SendGrid for OTP email, Google OAuth via Passport.

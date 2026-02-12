@@ -1,23 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const [ready, setReady] = useState(false);
+  const isClient = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
+  const token = isClient ? window.localStorage.getItem("token") : null;
 
   useEffect(() => {
-    const token = window.localStorage.getItem("token");
-    if (!token) {
+    if (isClient && !token) {
       router.replace("/login");
-      return;
     }
-    setReady(true);
-  }, [router]);
+  }, [isClient, token, router]);
 
-  if (!ready) {
+  if (!isClient || !token) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-sm text-slate">Checking session...</div>
