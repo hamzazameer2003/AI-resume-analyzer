@@ -26,8 +26,10 @@ This repo contains a **Next.js frontend** and a **Node.js/Express backend** with
 - `GEMINI_API_KEY` Gemini API key
 - `GEMINI_API_URL` optional (override full endpoint)
 - `GEMINI_MODEL` model name (default: `gemini-1.5-flash-8b`)
-- `SENDGRID_API_KEY` SendGrid API key
-- `SENDGRID_FROM_EMAIL` Verified sender email
+- `BREVO_API_KEY` Brevo API key
+- `BREVO_FROM_EMAIL` Verified sender email
+- `BREVO_FROM_NAME` Sender name in OTP email
+- `BREVO_API_URL` optional (default: `https://api.brevo.com/v3/smtp/email`)
 - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_CALLBACK_URL` for Google OAuth
 - `TRENDING_JOBS_API_URL` optional external API
 - `FRONTEND_URL` frontend base URL for OAuth redirects
@@ -54,7 +56,7 @@ All feature endpoints require `Authorization: Bearer <token>`.
 - **Resume Analysis**: Upload PDF/DOC/DOCX; file stored under `backend/uploads/`. Text is extracted (PDF/DOCX) and sent to Gemini.
 - **AI Resume Generator**: Form inputs validated; generates a professional PDF with `pdfkit`.
 - **Trending Jobs**: Uses API if configured, otherwise scrapes public resources; falls back to a static list.
-- **Auth**: JWT for session access, SendGrid for OTP email, Google OAuth via Passport.
+- **Auth**: JWT for session access, Brevo for OTP email, Google OAuth via Passport.
  - **Data**: Users, OTPs, resume uploads, and resume profiles are stored in MongoDB.
 
 ## Next Steps

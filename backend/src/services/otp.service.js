@@ -1,9 +1,5 @@
-const sgMail = require("@sendgrid/mail");
+const axios = require("axios");
 const Otp = require("../models/otp.model");
-
-if (process.env.SENDGRID_API_KEY) {
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-}
 
 function generateOtp() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -18,16 +14,35 @@ async function sendOtpEmail(email) {
     { upsert: true, new: true }
   );
 
-  if (!process.env.SENDGRID_API_KEY || !process.env.SENDGRID_FROM_EMAIL) {
+  if (!process.env.BREVO_API_KEY || !process.env.BREVO_FROM_EMAIL) {
     return { sent: false, otp }; // fallback for local dev
   }
 
-  await sgMail.send({
-    to: email,
-    from: process.env.SENDGRID_FROM_EMAIL,
-    subject: "Your OTP Code",
-    html: `<p>Your OTP code is <strong>${otp}</strong>. It expires in 10 minutes.</p>`,
-  });
+  try {
+    await axios.post(
+      process.env.BREVO_API_URL || "https://api.brevo.com/v3/smtp/email",
+      {
+        sender: {
+          email: process.env.BREVO_FROM_EMAIL,
+          name: process.env.BREVO_FROM_NAME || "Resume Analyzer",
+        },
+        to: [{ email }],
+        subject: "Your OTP Code",
+        htmlContent: `<p>Your OTP code is <strong>${otp}</strong>. It expires in 10 minutes.</p>`,
+      },
+      {
+        headers: {
+          "api-key": process.env.BREVO_API_KEY,
+          "Content-Type": "application/json",
+        },
+        timeout: 15000,
+      }
+    );
+  } catch (err) {
+    const sendErr = new Error("Failed to send OTP email. Verify Brevo API key and sender identity.");
+    sendErr.statusCode = 502;
+    throw sendErr;
+  }
 
   return { sent: true };
 }

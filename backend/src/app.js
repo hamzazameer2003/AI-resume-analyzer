@@ -43,7 +43,8 @@ app.use("/api/career", careerRoutes);
 // Error handler (including multer)
 app.use((err, req, res, next) => {
   if (err) {
-    return res.status(400).json({ message: err.message || "Request error" });
+    const status = err.statusCode || err.status || 500;
+    return res.status(status).json({ message: err.message || "Request error" });
   }
   return next();
 });

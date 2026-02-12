@@ -1,56 +1,66 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user.model");
-const Otp = require("../models/otp.model");
 const { sendOtpEmail, verifyOtpCode } = require("../services/otp.service");
 
 async function signup(req, res) {
   const { name, email, password, confirmPassword } = req.body || {};
+  const normalizedEmail = String(email || "").trim().toLowerCase();
 
-  if (!name || !email || !password || !confirmPassword) {
+  if (!name || !normalizedEmail || !password || !confirmPassword) {
     return res.status(400).json({ message: "All fields are required" });
   }
   if (password !== confirmPassword) {
     return res.status(400).json({ message: "Passwords do not match" });
   }
 
-  const existing = await User.findOne({ email });
+  const existing = await User.findOne({ email: normalizedEmail });
   if (existing) {
-    return res.status(400).json({ message: "Email already in use" });
+    if (existing.isEmailVerified) {
+      return res.status(400).json({ message: "Email already in use" });
+    }
+
+    existing.name = name;
+    existing.passwordHash = await bcrypt.hash(password, 10);
+    await existing.save();
+    await sendOtpEmail(normalizedEmail);
+    return res.json({ message: "Account exists but unverified. New OTP sent.", email: normalizedEmail });
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
-  await User.create({ name, email, passwordHash, isEmailVerified: false });
+  await User.create({ name, email: normalizedEmail, passwordHash, isEmailVerified: false });
 
-  await sendOtpEmail(email);
+  await sendOtpEmail(normalizedEmail);
 
-  return res.json({ message: "Signup successful. OTP sent.", email });
+  return res.json({ message: "Signup successful. OTP sent.", email: normalizedEmail });
 }
 
 async function verifyOtp(req, res) {
   const { email, otp } = req.body || {};
+  const normalizedEmail = String(email || "").trim().toLowerCase();
 
-  if (!email || !otp) {
+  if (!normalizedEmail || !otp) {
     return res.status(400).json({ message: "Email and OTP are required" });
   }
 
-  const ok = await verifyOtpCode(email, otp);
+  const ok = await verifyOtpCode(normalizedEmail, otp);
   if (!ok) {
     return res.status(400).json({ message: "Invalid OTP" });
   }
 
-  await User.updateOne({ email }, { isEmailVerified: true });
+  await User.updateOne({ email: normalizedEmail }, { isEmailVerified: true });
   return res.json({ message: "Email verified" });
 }
 
 async function login(req, res) {
   const { email, password } = req.body || {};
+  const normalizedEmail = String(email || "").trim().toLowerCase();
 
-  if (!email || !password) {
+  if (!normalizedEmail || !password) {
     return res.status(400).json({ message: "Email and password are required" });
   }
 
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email: normalizedEmail });
   if (!user || !user.passwordHash) {
     return res.status(400).json({ message: "Invalid credentials" });
   }
