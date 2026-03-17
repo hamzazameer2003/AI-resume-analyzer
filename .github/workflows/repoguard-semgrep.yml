@@ -1,0 +1,77 @@
+name: RepoGuard Semgrep Scan
+on:
+  workflow_dispatch:
+    inputs:
+      repo:
+        description: "RepoGuard scan"
+        required: false
+        default: ""
+jobs:
+  semgrep:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install Semgrep
+        run: pip install semgrep
+      - name: Run Semgrep scan
+        run: |
+          set +e
+          python - <<'PY'
+          import json, os, subprocess, sys
+          from pathlib import Path
+          
+          repo_root = Path(".")
+          code_exts = set([".js",".ts",".tsx",".jsx",".py",".rb",".go",".java",".kt",".scala",".cs",".cpp",".c",".h",".hpp",".php",".rs",".swift",".lua",".sh",".bash",".ps1",".json",".yml",".yaml",".xml",".html",".css",".scss",".less",".tf",".tfvars",".dockerfile",".sql"])
+          def is_supported(path: Path) -> bool:
+            name = path.name.lower()
+            if name == "dockerfile":
+              return True
+            lower = str(path).lower()
+            return any(lower.endswith(ext) for ext in code_exts)
+          
+          files = [str(p) for p in repo_root.rglob("*") if p.is_file() and is_supported(p)]
+          results = []
+          errors = []
+          scans = 0
+
+          def chunks(items, size):
+            for i in range(0, len(items), size):
+              yield items[i:i + size]
+
+          batch_size = 25
+          for batch in chunks(files, batch_size):
+            try:
+              proc = subprocess.run(
+                ["semgrep", "scan", "--config", "auto", "--json", *batch],
+                capture_output=True,
+                text=True,
+                timeout=120
+              )
+              scans += len(batch)
+              if proc.stdout:
+                try:
+                  data = json.loads(proc.stdout)
+                  results.extend(data.get("results", []))
+                  errors.extend(data.get("errors", []))
+                except Exception:
+                  errors.append({"message": "Failed to parse semgrep output", "path": "batch"})
+              if proc.stderr:
+                errors.append({"message": proc.stderr.strip(), "path": "batch"})
+            except subprocess.TimeoutExpired:
+              errors.append({"message": "Semgrep timed out while scanning batch", "path": "batch"})
+            except Exception as e:
+              errors.append({"message": str(e), "path": "batch"})
+          
+          payload = {"results": results, "errors": errors, "scanned_files": scans}
+          with open("repoguard-semgrep.json", "w", encoding="utf-8") as fh:
+            json.dump(payload, fh)
+          PY
+      - name: Upload Semgrep JSON
+        uses: actions/upload-artifact@v4
+        with:
+          name: repoguard-semgrep
+          path: repoguard-semgrep.json
