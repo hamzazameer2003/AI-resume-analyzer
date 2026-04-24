@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { postJson } from "@/lib/api";
 
-export default function VerifyOtpPage() {
+function VerifyOtpPageContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const emailFromQuery = searchParams.get("email") || "";
@@ -62,5 +62,13 @@ export default function VerifyOtpPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VerifyOtpPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center text-sm text-slate">Loading...</div>}>
+      <VerifyOtpPageContent />
+    </Suspense>
   );
 }
