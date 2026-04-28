@@ -3,8 +3,126 @@
 import { useState } from "react";
 import { API_URL } from "@/lib/api";
 
+type ExperienceLevel = "experienced" | "fresher";
+
+type TimelineItem = {
+  title: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+};
+
+const emptyTimelineItem = (): TimelineItem => ({
+  title: "",
+  description: "",
+  startDate: "",
+  endDate: "",
+});
+
+function TimelineEditor({
+  label,
+  titlePlaceholder,
+  descriptionPlaceholder,
+  items,
+  onChange,
+}: {
+  label: string;
+  titlePlaceholder: string;
+  descriptionPlaceholder: string;
+  items: TimelineItem[];
+  onChange: (items: TimelineItem[]) => void;
+}) {
+  function updateItem(index: number, key: keyof TimelineItem, value: string) {
+    const next = items.map((item, itemIndex) =>
+      itemIndex === index ? { ...item, [key]: value } : item
+    );
+    onChange(next);
+  }
+
+  function addItem() {
+    onChange([...items, emptyTimelineItem()]);
+  }
+
+  function removeItem(index: number) {
+    if (items.length === 1) {
+      onChange([emptyTimelineItem()]);
+      return;
+    }
+    onChange(items.filter((_, itemIndex) => itemIndex !== index));
+  }
+
+  return (
+    <div className="mt-4 space-y-3">
+      <div className="flex items-center justify-between gap-3">
+        <label className="text-xs uppercase tracking-widest text-slate dark:text-slate-300">
+          {label}
+        </label>
+        <button
+          type="button"
+          onClick={addItem}
+          className="rounded-full border border-ink/20 px-3 py-1 text-xs text-ink dark:border-white/20 dark:text-slate-100"
+        >
+          Add another
+        </button>
+      </div>
+      {items.map((item, index) => (
+        <div
+          key={`${label}-${index}`}
+          className="space-y-3 rounded-2xl border border-ink/10 bg-white/70 p-4 dark:border-white/10 dark:bg-slate-950"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm font-medium text-ink dark:text-slate-100">
+              {label} {index + 1}
+            </p>
+            <button
+              type="button"
+              onClick={() => removeItem(index)}
+              className="rounded-full border border-red-300 px-3 py-1 text-xs text-red-600 dark:border-red-400/40 dark:text-red-300"
+            >
+              Remove
+            </button>
+          </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            <input
+              className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-900 dark:text-slate-100"
+              placeholder={titlePlaceholder}
+              value={item.title}
+              onChange={(e) => updateItem(index, "title", e.target.value)}
+              required
+            />
+            <div className="grid gap-3 sm:grid-cols-2">
+              <input
+                className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-900 dark:text-slate-100"
+                type="month"
+                value={item.startDate}
+                onChange={(e) => updateItem(index, "startDate", e.target.value)}
+                required
+              />
+              <input
+                className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-900 dark:text-slate-100"
+                type="month"
+                value={item.endDate}
+                onChange={(e) => updateItem(index, "endDate", e.target.value)}
+                required
+              />
+            </div>
+          </div>
+          <textarea
+            className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-900 dark:text-slate-100"
+            placeholder={descriptionPlaceholder}
+            rows={4}
+            value={item.description}
+            onChange={(e) => updateItem(index, "description", e.target.value)}
+            required
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function ResumeGeneratorPage() {
-  const [experienceLevel, setExperienceLevel] = useState("fresher");
+  const [experienceLevel, setExperienceLevel] = useState<ExperienceLevel>("fresher");
   const [form, setForm] = useState({
     fullName: "",
     email: "",
@@ -15,16 +133,17 @@ export default function ResumeGeneratorPage() {
     github: "",
     portfolio: "",
     summary: "",
-    experience: "",
-    projects: "",
     skills: "",
     education: "",
     certifications: "",
     achievements: "",
     languages: "",
   });
+  const [experienceItems, setExperienceItems] = useState<TimelineItem[]>([emptyTimelineItem()]);
+  const [projectItems, setProjectItems] = useState<TimelineItem[]>([emptyTimelineItem()]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [summaryLoading, setSummaryLoading] = useState(false);
   const [theme, setTheme] = useState("midnight");
   const [sectionOrder, setSectionOrder] = useState([
     "summary",
@@ -37,8 +156,43 @@ export default function ResumeGeneratorPage() {
     "languages",
   ]);
 
-  function updateField(key: string, value: string) {
+  function updateField(key: keyof typeof form, value: string) {
     setForm((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function handleGenerateSummary() {
+    setError("");
+    setSummaryLoading(true);
+
+    try {
+      const token = window.localStorage.getItem("token") || "";
+      const res = await fetch(`${API_URL}/api/resume-generator/summary`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title: form.title,
+          skills: form.skills,
+          experienceLevel,
+          experience: experienceItems,
+          projects: projectItems,
+        }),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || "Summary generation failed");
+      }
+
+      const data = (await res.json()) as { summary?: string };
+      updateField("summary", data.summary || "");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Summary generation failed");
+    } finally {
+      setSummaryLoading(false);
+    }
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -51,8 +205,8 @@ export default function ResumeGeneratorPage() {
       const payload = {
         ...form,
         experienceLevel,
-        experience: experienceLevel === "experienced" ? form.experience : undefined,
-        projects: experienceLevel === "fresher" ? form.projects : undefined,
+        experience: experienceLevel === "experienced" ? experienceItems : [],
+        projects: experienceLevel === "fresher" ? projectItems : [],
         theme,
         sectionOrder,
       };
@@ -89,9 +243,14 @@ export default function ResumeGeneratorPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-semibold">AI Resume Builder</h1>
-        <p className="text-sm text-slate dark:text-slate-300">Fill the form and generate a professional PDF resume. This feature use AI to generate content, so make sure to review and edit it before using.</p>
+        <p className="text-sm text-slate dark:text-slate-300">
+          Fill the form and generate a professional PDF resume. This feature uses AI to improve content, so review it before sending it out.
+        </p>
       </div>
-      <form className="rounded-2xl border border-white/70 bg-white/80 p-6 shadow-sm dark:border-white/10 dark:bg-slate-900/70" onSubmit={handleSubmit}>
+      <form
+        className="rounded-2xl border border-white/70 bg-white/80 p-6 shadow-sm dark:border-white/10 dark:bg-slate-900/70"
+        onSubmit={handleSubmit}
+      >
         <div className="grid gap-4 md:grid-cols-2">
           <input
             className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
@@ -126,6 +285,7 @@ export default function ResumeGeneratorPage() {
             placeholder="Target title (e.g., Software Engineer)"
             value={form.title}
             onChange={(e) => updateField("title", e.target.value)}
+            required
           />
           <input
             className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
@@ -146,21 +306,38 @@ export default function ResumeGeneratorPage() {
             onChange={(e) => updateField("portfolio", e.target.value)}
           />
           <input
-            className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
+            className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100 md:col-span-2"
             placeholder="Skills (comma-separated)"
             value={form.skills}
             onChange={(e) => updateField("skills", e.target.value)}
             required
           />
         </div>
-        <textarea
-          className="mt-4 w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
-          placeholder="Professional summary"
-          rows={3}
-          value={form.summary}
-          onChange={(e) => updateField("summary", e.target.value)}
-          required
-        />
+
+        <div className="mt-4 space-y-2">
+          <div className="flex items-center justify-between gap-3">
+            <label className="text-xs uppercase tracking-widest text-slate dark:text-slate-300">
+              Professional Summary
+            </label>
+            <button
+              type="button"
+              onClick={handleGenerateSummary}
+              disabled={summaryLoading || !form.title.trim()}
+              className="rounded-full border border-ink/20 px-3 py-1 text-xs text-ink disabled:opacity-50 dark:border-white/20 dark:text-slate-100"
+            >
+              {summaryLoading ? "Generating..." : "Generate with AI"}
+            </button>
+          </div>
+          <textarea
+            className="w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
+            placeholder="Professional summary"
+            rows={4}
+            value={form.summary}
+            onChange={(e) => updateField("summary", e.target.value)}
+            required
+          />
+        </div>
+
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div>
             <label className="text-xs uppercase tracking-widest text-slate dark:text-slate-300">
@@ -218,6 +395,7 @@ export default function ResumeGeneratorPage() {
             </div>
           </div>
         </div>
+
         <div className="mt-4 flex items-center gap-4 text-sm">
           <label className="flex items-center gap-2">
             <input
@@ -240,26 +418,25 @@ export default function ResumeGeneratorPage() {
             Fresher
           </label>
         </div>
-        {experienceLevel === "experienced" && (
-          <textarea
-            className="mt-4 w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
-            placeholder="Experience details"
-            rows={4}
-            value={form.experience}
-            onChange={(e) => updateField("experience", e.target.value)}
-            required
+
+        {experienceLevel === "experienced" ? (
+          <TimelineEditor
+            label="Work Experience"
+            titlePlaceholder="Job title"
+            descriptionPlaceholder="Describe your responsibilities, wins, and impact"
+            items={experienceItems}
+            onChange={setExperienceItems}
+          />
+        ) : (
+          <TimelineEditor
+            label="Projects"
+            titlePlaceholder="Project title"
+            descriptionPlaceholder="Describe the project, tools used, and results"
+            items={projectItems}
+            onChange={setProjectItems}
           />
         )}
-        {experienceLevel === "fresher" && (
-          <textarea
-            className="mt-4 w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
-            placeholder="Projects and short descriptions"
-            rows={4}
-            value={form.projects}
-            onChange={(e) => updateField("projects", e.target.value)}
-            required
-          />
-        )}
+
         <textarea
           className="mt-4 w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
           placeholder="Education (one per line)"
