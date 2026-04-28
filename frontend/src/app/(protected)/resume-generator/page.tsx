@@ -138,6 +138,7 @@ export default function ResumeGeneratorPage() {
     certifications: "",
     achievements: "",
     languages: "",
+    softSkills: "",
   });
   const [experienceItems, setExperienceItems] = useState<TimelineItem[]>([emptyTimelineItem()]);
   const [projectItems, setProjectItems] = useState<TimelineItem[]>([emptyTimelineItem()]);
@@ -154,6 +155,7 @@ export default function ResumeGeneratorPage() {
     "certifications",
     "achievements",
     "languages",
+    "soft-skills",
   ]);
 
   function updateField(key: keyof typeof form, value: string) {
@@ -463,6 +465,12 @@ export default function ResumeGeneratorPage() {
           placeholder="Languages (comma-separated)"
           value={form.languages}
           onChange={(e) => updateField("languages", e.target.value)}
+        />
+        <input
+          className="mt-4 w-full rounded-xl border border-ink/10 bg-white px-4 py-3 text-sm outline-none focus:border-ink dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
+          placeholder="Soft skills (comma-separated)"
+          value={form.softSkills}
+          onChange={(e) => updateField("softSkills", e.target.value)}
         />
         {error && <p className="mt-3 text-sm text-red-500">{error}</p>}
         <button
