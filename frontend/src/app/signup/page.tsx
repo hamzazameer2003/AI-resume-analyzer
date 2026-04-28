@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { postJson } from "@/lib/api";
+import { API_URL, postJson } from "@/lib/api";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -76,8 +76,16 @@ export default function SignupPage() {
               {loading ? "Submitting..." : "Create account"}
             </button>
           </form>
-          <div className="mt-4 text-sm text-slate dark:text-slate-300">
-            Already have an account? <Link href="/login">Login</Link>
+          <div className="mt-4 flex items-center justify-between gap-4 text-sm text-slate dark:text-slate-300">
+            <span>
+              Already have an account? <Link href="/login">Login</Link>
+            </span>
+            <a
+              href={`${API_URL}/api/auth/google`}
+              className="rounded-full border border-ink/10 px-4 py-2 text-sm text-ink transition hover:-translate-y-0.5 dark:border-white/10 dark:text-slate-100"
+            >
+              Continue with Google
+            </a>
           </div>
         </div>
       </div>

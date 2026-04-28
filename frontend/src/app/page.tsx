@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import SiteHeader from "@/components/SiteHeader";
 import FeatureCard from "@/components/FeatureCard";
+import { useIsLoggedIn } from "@/lib/auth";
 
 const features = [
   {
@@ -22,6 +25,8 @@ const features = [
 ];
 
 export default function Home() {
+  const isLoggedIn = useIsLoggedIn();
+
   return (
     <main>
       <SiteHeader />
@@ -40,18 +45,37 @@ export default function Home() {
               trending jobs and get clear next steps.
             </p>
             <div className="flex flex-wrap items-center gap-4">
-              <Link
-                href="/signup"
-                className="rounded-full bg-ink px-5 py-2.5 text-sm text-fog transition hover:-translate-y-0.5 dark:bg-slate-100 dark:text-slate-900"
-              >
-                Start Free
-              </Link>
-              <Link
-                href="/login"
-                className="rounded-full border border-ink/20 px-5 py-2.5 text-sm text-ink transition hover:-translate-y-0.5 dark:border-white/20 dark:text-slate-100"
-              >
-                Already a member
-              </Link>
+              {isLoggedIn ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="rounded-full bg-ink px-5 py-2.5 text-sm text-fog transition hover:-translate-y-0.5 dark:bg-slate-100 dark:text-slate-900"
+                  >
+                    Go to Dashboard
+                  </Link>
+                  <Link
+                    href="/resume-analysis"
+                    className="rounded-full border border-ink/20 px-5 py-2.5 text-sm text-ink transition hover:-translate-y-0.5 dark:border-white/20 dark:text-slate-100"
+                  >
+                    Analyze Resume
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/signup"
+                    className="rounded-full bg-ink px-5 py-2.5 text-sm text-fog transition hover:-translate-y-0.5 dark:bg-slate-100 dark:text-slate-900"
+                  >
+                    Start Free
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="rounded-full border border-ink/20 px-5 py-2.5 text-sm text-ink transition hover:-translate-y-0.5 dark:border-white/20 dark:text-slate-100"
+                  >
+                    Already a member
+                  </Link>
+                </>
+              )}
             </div>
           </div>
           <div className="relative">
@@ -96,12 +120,16 @@ export default function Home() {
 
         <section className="flex flex-col items-center gap-4 rounded-3xl bg-ink px-8 py-10 text-center text-fog shadow-xl dark:bg-slate-950">
           <h3 className="text-2xl font-semibold">Ready to unlock your next role?</h3>
-          <p className="text-sm text-fog/70">Sign in to access every feature. No login, no access.</p>
+          <p className="text-sm text-fog/70">
+            {isLoggedIn
+              ? "Jump back into your workspace and keep refining your next application."
+              : "Sign in to access every feature. No login, no access."}
+          </p>
           <Link
-            href="/signup"
+            href={isLoggedIn ? "/dashboard" : "/signup"}
             className="rounded-full bg-fog px-5 py-2.5 text-sm text-ink transition hover:-translate-y-0.5 dark:bg-slate-100 dark:text-slate-900"
           >
-            Create your account
+            {isLoggedIn ? "Open dashboard" : "Create your account"}
           </Link>
         </section>
       </section>

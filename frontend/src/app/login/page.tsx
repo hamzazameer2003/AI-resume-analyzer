@@ -73,7 +73,7 @@ function LoginPageContent() {
             <Link href="/signup">Create account</Link>
             <a
               href={`${API_URL}/api/auth/google`}
-              className="rounded-full border border-ink/10 px-3 py-1 text-xs dark:border-white/10"
+              className="rounded-full border border-ink/10 px-4 py-2 text-sm text-ink transition hover:-translate-y-0.5 dark:border-white/10 dark:text-slate-100"
             >
               Login with Google
             </a>
