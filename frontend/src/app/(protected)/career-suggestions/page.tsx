@@ -53,7 +53,7 @@ export default function CareerSuggestionsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-semibold">Career Suggestions</h1>
+        <h1 className="text-2xl font-semibold sm:text-3xl">Career Suggestions</h1>
         <p className="text-sm text-slate dark:text-slate-300">Guided roles based on your resume analysis.</p>
       </div>
       <div className="rounded-2xl border border-white/70 bg-white/80 p-4 shadow-sm dark:border-white/10 dark:bg-slate-900/70">
@@ -82,7 +82,7 @@ export default function CareerSuggestionsPage() {
       {error && <p className="text-sm text-red-500">{error}</p>}
       <div className="grid gap-4 md:grid-cols-2">
         {suggestions.map((item) => (
-          <div key={item} className="rounded-2xl border border-white/70 bg-white/80 p-6 shadow-sm dark:border-white/10 dark:bg-slate-900/70">
+          <div key={item} className="rounded-2xl border border-white/70 bg-white/80 p-5 shadow-sm sm:p-6 dark:border-white/10 dark:bg-slate-900/70">
             {item}
           </div>
         ))}

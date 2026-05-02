@@ -86,13 +86,13 @@ export default function ResumeAnalysisPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-semibold">Resume Analysis</h1>
+        <h1 className="text-2xl font-semibold sm:text-3xl">Resume Analysis</h1>
         <p className="text-sm text-slate dark:text-slate-300">
           Upload your resume and target role to get ATS insights.
         </p>
       </div>
       <form
-        className="rounded-2xl border border-white/70 bg-white/80 p-6 shadow-sm dark:border-white/10 dark:bg-slate-900/70"
+        className="rounded-2xl border border-white/70 bg-white/80 p-5 shadow-sm sm:p-6 dark:border-white/10 dark:bg-slate-900/70"
         onSubmit={handleSubmit}
       >
         <div className="grid gap-4 md:grid-cols-2">
@@ -113,7 +113,7 @@ export default function ResumeAnalysisPage() {
         </div>
         <button
           type="submit"
-          className="mt-4 rounded-xl bg-ink px-4 py-3 text-sm text-fog transition hover:-translate-y-0.5 dark:bg-slate-100 dark:text-slate-900"
+          className="mt-4 w-full rounded-xl bg-ink px-4 py-3 text-sm text-fog transition hover:-translate-y-0.5 sm:w-auto dark:bg-slate-100 dark:text-slate-900"
           disabled={loading}
         >
           {loading ? "Analyzing..." : "Analyze Resume"}
@@ -123,11 +123,11 @@ export default function ResumeAnalysisPage() {
       {result && (
         <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="space-y-4">
-            <div className="rounded-2xl border border-white/70 bg-white/80 p-6 shadow-sm dark:border-white/10 dark:bg-slate-900/70">
+            <div className="rounded-2xl border border-white/70 bg-white/80 p-5 shadow-sm sm:p-6 dark:border-white/10 dark:bg-slate-900/70">
               <p className="text-xs uppercase tracking-widest text-slate dark:text-slate-300">
                 ATS Score
               </p>
-              <div className="mt-4 flex items-center gap-6">
+              <div className="mt-4 flex flex-col gap-5 sm:flex-row sm:items-center sm:gap-6">
                 <div className="relative h-24 w-24">
                   <svg viewBox="0 0 36 36" className="h-24 w-24 -rotate-90">
                     <path
@@ -147,13 +147,13 @@ export default function ResumeAnalysisPage() {
                     {result.atsScore ?? "--"}
                   </div>
                 </div>
-                <div>
+                <div className="min-w-0">
                   <div className="text-sm text-slate dark:text-slate-300">Score verdict</div>
                   <div className="text-lg font-semibold">{scoreLabel}</div>
                   <button
                     type="button"
                     onClick={downloadReport}
-                    className="mt-3 rounded-full border border-ink/20 px-3 py-1 text-xs text-ink transition hover:-translate-y-0.5 dark:border-white/20 dark:text-slate-100"
+                    className="mt-3 rounded-full border border-ink/20 px-3 py-2 text-xs text-ink transition hover:-translate-y-0.5 dark:border-white/20 dark:text-slate-100"
                   >
                     Download report
                   </button>
@@ -166,7 +166,7 @@ export default function ResumeAnalysisPage() {
                 <h3 className="text-lg font-semibold">Strengths</h3>
                 <ul className="mt-3 space-y-2 text-sm text-slate dark:text-slate-300">
                   {(result.pros || []).map((item, idx) => (
-                    <li key={idx}>• {item}</li>
+                    <li key={idx}>- {item}</li>
                   ))}
                   {!result.pros?.length && <li>No strong points detected yet.</li>}
                 </ul>
@@ -175,7 +175,7 @@ export default function ResumeAnalysisPage() {
                 <h3 className="text-lg font-semibold">Weak Spots</h3>
                 <ul className="mt-3 space-y-2 text-sm text-slate dark:text-slate-300">
                   {(result.cons || []).map((item, idx) => (
-                    <li key={idx}>• {item}</li>
+                    <li key={idx}>- {item}</li>
                   ))}
                   {!result.cons?.length && <li>No issues detected yet.</li>}
                 </ul>
@@ -183,18 +183,18 @@ export default function ResumeAnalysisPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-white/70 bg-white/80 p-6 shadow-sm dark:border-white/10 dark:bg-slate-900/70">
+          <div className="rounded-2xl border border-white/70 bg-white/80 p-5 shadow-sm sm:p-6 dark:border-white/10 dark:bg-slate-900/70">
             <h3 className="text-lg font-semibold">Suggestions</h3>
             <p className="mt-2 text-sm text-slate dark:text-slate-300">
               Simple, practical improvements you can apply right away.
             </p>
             <ol className="mt-4 space-y-3 text-sm text-slate dark:text-slate-300">
               {(result.suggestions || []).map((item, idx) => (
-                <li key={idx}>
-                  <span className="mr-2 rounded-full bg-fog px-2 py-0.5 text-xs text-ink dark:bg-slate-800 dark:text-slate-100">
+                <li key={idx} className="flex items-start gap-2">
+                  <span className="mt-0.5 rounded-full bg-fog px-2 py-0.5 text-xs text-ink dark:bg-slate-800 dark:text-slate-100">
                     {idx + 1}
                   </span>
-                  {item}
+                  <span className="min-w-0">{item}</span>
                 </li>
               ))}
               {!result.suggestions?.length && <li>No suggestions yet.</li>}

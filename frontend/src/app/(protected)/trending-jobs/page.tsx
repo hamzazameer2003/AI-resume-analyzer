@@ -61,7 +61,7 @@ export default function TrendingJobsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-semibold">Trending Jobs</h1>
+        <h1 className="text-2xl font-semibold sm:text-3xl">Trending Jobs</h1>
         <p className="text-sm text-slate dark:text-slate-300">Live market signals, companies, and opportunity hints.</p>
       </div>
       <div className="rounded-2xl border border-white/70 bg-white/80 p-4 shadow-sm dark:border-white/10 dark:bg-slate-900/70">
@@ -90,11 +90,11 @@ export default function TrendingJobsPage() {
       {error && <p className="text-sm text-red-500">{error}</p>}
       <div className="grid gap-4 md:grid-cols-2">
         {jobs.map((job) => (
-          <div key={job.title} className="rounded-2xl border border-white/70 bg-white/80 p-6 shadow-sm dark:border-white/10 dark:bg-slate-900/70">
-            <div className="flex items-center justify-between gap-3">
+          <div key={job.title} className="rounded-2xl border border-white/70 bg-white/80 p-5 shadow-sm sm:p-6 dark:border-white/10 dark:bg-slate-900/70">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <h3 className="text-lg font-semibold">{job.title}</h3>
               {typeof job.relevanceScore === "number" && (
-                <span className="rounded-full bg-fog px-2 py-1 text-xs text-ink dark:bg-slate-800 dark:text-slate-100">
+                <span className="w-fit rounded-full bg-fog px-2 py-1 text-xs text-ink dark:bg-slate-800 dark:text-slate-100">
                   Match {job.relevanceScore}
                 </span>
               )}

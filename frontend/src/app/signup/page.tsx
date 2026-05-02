@@ -31,8 +31,8 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen bg-fog dark:bg-slate-950">
-      <div className="mx-auto flex min-h-screen max-w-4xl items-center justify-center px-6">
-        <div className="w-full max-w-md rounded-3xl border border-white/70 bg-white/80 p-8 shadow-xl dark:border-white/10 dark:bg-slate-900/70">
+      <div className="mx-auto flex min-h-screen max-w-4xl items-center justify-center px-4 py-8 sm:px-6">
+        <div className="w-full max-w-md rounded-3xl border border-white/70 bg-white/80 p-5 shadow-xl sm:p-8 dark:border-white/10 dark:bg-slate-900/70">
           <h1 className="text-2xl font-semibold">Create account</h1>
           <p className="mt-2 text-sm text-slate dark:text-slate-300">We will send an OTP to verify your email.</p>
           <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
@@ -76,13 +76,13 @@ export default function SignupPage() {
               {loading ? "Submitting..." : "Create account"}
             </button>
           </form>
-          <div className="mt-4 flex items-center justify-between gap-4 text-sm text-slate dark:text-slate-300">
-            <span>
+          <div className="mt-4 flex flex-col items-stretch gap-3 text-sm text-slate sm:flex-row sm:items-center sm:justify-between dark:text-slate-300">
+            <span className="text-left">
               Already have an account? <Link href="/login">Login</Link>
             </span>
             <a
               href={`${API_URL}/api/auth/google`}
-              className="rounded-full border border-ink/10 px-4 py-2 text-sm text-ink transition hover:-translate-y-0.5 dark:border-white/10 dark:text-slate-100"
+              className="rounded-full border border-ink/10 px-4 py-3 text-center text-sm text-ink transition hover:-translate-y-0.5 dark:border-white/10 dark:text-slate-100"
             >
               Continue with Google
             </a>

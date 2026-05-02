@@ -53,7 +53,7 @@ function TimelineEditor({
 
   return (
     <div className="mt-4 space-y-3">
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <label className="text-xs uppercase tracking-widest text-slate dark:text-slate-300">
           {label}
         </label>
@@ -70,7 +70,7 @@ function TimelineEditor({
           key={`${label}-${index}`}
           className="space-y-3 rounded-2xl border border-ink/10 bg-white/70 p-4 dark:border-white/10 dark:bg-slate-950"
         >
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm font-medium text-ink dark:text-slate-100">
               {label} {index + 1}
             </p>
@@ -244,13 +244,13 @@ export default function ResumeGeneratorPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-semibold">AI Resume Builder</h1>
+        <h1 className="text-2xl font-semibold sm:text-3xl">AI Resume Builder</h1>
         <p className="text-sm text-slate dark:text-slate-300">
           Fill the form and generate a professional PDF resume. This feature uses AI to improve content, so review it before sending it out.
         </p>
       </div>
       <form
-        className="rounded-2xl border border-white/70 bg-white/80 p-6 shadow-sm dark:border-white/10 dark:bg-slate-900/70"
+        className="rounded-2xl border border-white/70 bg-white/80 p-5 shadow-sm sm:p-6 dark:border-white/10 dark:bg-slate-900/70"
         onSubmit={handleSubmit}
       >
         <div className="grid gap-4 md:grid-cols-2">
@@ -317,7 +317,7 @@ export default function ResumeGeneratorPage() {
         </div>
 
         <div className="mt-4 space-y-2">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <label className="text-xs uppercase tracking-widest text-slate dark:text-slate-300">
               Professional Summary
             </label>
@@ -398,7 +398,7 @@ export default function ResumeGeneratorPage() {
           </div>
         </div>
 
-        <div className="mt-4 flex items-center gap-4 text-sm">
+        <div className="mt-4 flex flex-col gap-3 text-sm sm:flex-row sm:items-center sm:gap-4">
           <label className="flex items-center gap-2">
             <input
               type="radio"
@@ -475,7 +475,7 @@ export default function ResumeGeneratorPage() {
         {error && <p className="mt-3 text-sm text-red-500">{error}</p>}
         <button
           type="submit"
-          className="mt-4 rounded-xl bg-ink px-4 py-3 text-sm text-fog transition hover:-translate-y-0.5 dark:bg-slate-100 dark:text-slate-900"
+          className="mt-4 w-full rounded-xl bg-ink px-4 py-3 text-sm text-fog transition hover:-translate-y-0.5 sm:w-auto dark:bg-slate-100 dark:text-slate-900"
           disabled={loading}
         >
           {loading ? "Generating..." : "Generate Resume"}

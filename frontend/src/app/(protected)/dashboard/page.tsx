@@ -48,7 +48,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-semibold">Dashboard</h1>
+        <h1 className="text-2xl font-semibold sm:text-3xl">Dashboard</h1>
         <p className="text-sm text-slate dark:text-slate-300">All your resume scores and insights.</p>
       </div>
       {error && <p className="text-sm text-red-500">{error}</p>}
@@ -59,7 +59,7 @@ export default function DashboardPage() {
             className="rounded-2xl border border-white/70 bg-white/80 p-5 shadow-sm dark:border-white/10 dark:bg-slate-900/70"
           >
             <p className="text-sm text-slate dark:text-slate-300">{resume.jobTitle || "Target Role"}</p>
-            <p className="text-2xl font-semibold">{resume.atsScore ?? "--"}</p>
+            <p className="break-words text-2xl font-semibold">{resume.atsScore ?? "--"}</p>
             <p className="text-xs text-slate dark:text-slate-300">ATS Score</p>
             {resume.id && (
               <button
